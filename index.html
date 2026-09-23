@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Registro de huéspedes · Lavanda Suite</title>
+  <style>
+    :root {
+      --fondo: #f7f3fb; --tarjeta: #ffffff; --texto: #1c1b1f; --suave: #5f5a66;
+      --primario: #6a4c93; --sobre-primario: #ffffff; --borde: #d8cfe4; --error: #b3261e; --ok: #2e7d32;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --fondo: #1c1a20; --tarjeta: #26232c; --texto: #ece6f0; --suave: #b9b1c4;
+        --primario: #d3bbff; --sobre-primario: #3b1b6e; --borde: #4a4453; --error: #f2b8b5; --ok: #a5d6a7;
+      }
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--fondo); color: var(--texto); font: 16px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    main { max-width: 640px; margin: 0 auto; padding: 16px; }
+    header { text-align: center; padding: 16px 0 8px; }
+    h1 { font-size: 1.5rem; margin: 0; color: var(--primario); }
+    .tarjeta { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 14px; padding: 16px; margin: 12px 0; }
+    h2 { font-size: 1.05rem; margin: 0 0 8px; }
+    label { display: block; font-weight: 600; margin: 12px 0 4px; }
+    .ayuda { font-weight: 400; color: var(--suave); font-size: .9rem; }
+    input, select, textarea { width: 100%; padding: 10px 12px; font: inherit; color: inherit; background: transparent;
+      border: 1px solid var(--borde); border-radius: 10px; }
+    textarea { min-height: 90px; }
+    .fila { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+    .check { display: flex; gap: 10px; align-items: flex-start; font-weight: 400; margin: 12px 0; }
+    .check input { width: auto; margin-top: 4px; }
+    button { width: 100%; padding: 14px; font: inherit; font-weight: 700; border: 0; border-radius: 12px;
+      background: var(--primario); color: var(--sobre-primario); margin-top: 16px; cursor: pointer; }
+    button:disabled { opacity: .6; }
+    .error { color: var(--error); }
+    .ok { color: var(--ok); }
+    .fotos { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .foto img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 8px; border: 1px solid var(--borde); margin-top: 6px; }
+    input[type=file] { padding: 8px; font-size: .9rem; }
+    [hidden] { display: none !important; }
+    @media (max-width: 420px) { .fila { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Lavanda Suite</h1>
+    <div class="ayuda">Villa Gesell · Registro de huéspedes</div>
+  </header>
+
+  <p id="cargando" class="tarjeta">Cargando tu reserva…</p>
+  <p id="sinReserva" class="tarjeta error" hidden>
+    Este link no es válido o ya fue usado. Si necesitás corregir algún dato, escribinos por WhatsApp.
+  </p>
+  <div id="listo" class="tarjeta" hidden>
+    <h2 class="ok">¡Gracias! Recibimos tus datos.</h2>
+    <p>En breve te enviamos por WhatsApp el convenio de hospedaje y los datos para la seña.</p>
+  </div>
+
+  <form id="formulario" hidden novalidate>
+    <div class="tarjeta">
+      <h2 id="saludo"></h2>
+      <div id="fechas" class="ayuda"></div>
+    </div>
+
+    <div class="tarjeta">
+      <h2>Titular de la reserva</h2>
+      <div class="fila">
+        <div><label for="nombre">Nombre</label><input id="nombre" required maxlength="100" autocomplete="given-name"></div>
+        <div><label for="apellido">Apellido</label><input id="apellido" required maxlength="100" autocomplete="family-name"></div>
+      </div>
+      <div class="fila">
+        <div><label for="tipoDocumento">Documento</label>
+          <select id="tipoDocumento"><option>DNI</option><option>Pasaporte</option><option>Otro</option></select></div>
+        <div><label for="numeroDocumento">Número</label><input id="numeroDocumento" required maxlength="30" inputmode="numeric"></div>
+      </div>
+      <label for="paisDocumento">País que lo emitió</label><input id="paisDocumento" value="Argentina" maxlength="60">
+    </div>
+
+    <div class="tarjeta">
+      <h2>Domicilio</h2>
+      <div class="fila">
+        <div><label for="calle">Calle</label><input id="calle" required maxlength="100"></div>
+        <div><label for="numero">Número</label><input id="numero" required maxlength="20"></div>
+      </div>
+      <label for="pisoDepto">Piso / Depto <span class="ayuda">(opcional)</span></label><input id="pisoDepto" maxlength="30">
+      <div class="fila">
+        <div><label for="localidad">Localidad</label><input id="localidad" required maxlength="80"></div>
+        <div><label for="provincia">Provincia</label><input id="provincia" required maxlength="80"></div>
+      </div>
+      <label for="pais">País</label><input id="pais" value="Argentina" maxlength="60">
+    </div>
+
+    <div class="tarjeta">
+      <h2>Contacto y llegada</h2>
+      <label for="telefono">WhatsApp <span class="ayuda">(con código de área, sin 0 ni 15)</span></label>
+      <input id="telefono" required maxlength="30" inputmode="tel" autocomplete="tel">
+      <label for="email">Email</label><input id="email" type="email" maxlength="100" autocomplete="email">
+      <label for="horaLlegada">Horario estimado de llegada <span class="ayuda">(el ingreso es desde las 14 hs)</span></label>
+      <input id="horaLlegada" type="time" value="14:00">
+    </div>
+
+    <div class="tarjeta">
+      <h2>Huéspedes</h2>
+      <label for="cantidadHuespedes">Cantidad total de huéspedes <span class="ayuda">(incluye menores; máximo 4)</span></label>
+      <select id="cantidadHuespedes"><option>1</option><option selected>2</option><option>3</option><option>4</option></select>
+      <label for="acompanantes">Nombre y DNI de cada acompañante <span class="ayuda">(uno por línea)</span></label>
+      <textarea id="acompanantes" maxlength="1000"></textarea>
+      <label for="vehiculo">¿Vienen con vehículo?</label>
+      <select id="vehiculo"><option value="no">No</option><option value="si">Sí</option></select>
+      <div id="bloquePatente" hidden><label for="patente">Patente</label><input id="patente" maxlength="15"></div>
+      <label for="mascota">¿Traen mascota?</label>
+      <select id="mascota">
+        <option>No</option><option>Pequeña (menos de 10 kg)</option><option>Mediana (10 a 25 kg)</option><option>Grande (más de 25 kg)</option>
+      </select>
+    </div>
+
+    <div class="tarjeta">
+      <h2>Foto del documento del titular</h2>
+      <div class="ayuda">Frente y dorso. Solo las ven los anfitriones.</div>
+      <div class="fotos">
+        <div class="foto"><label for="fotoFrente">Frente</label>
+          <input id="fotoFrente" type="file" accept="image/*"><img id="vistaFrente" alt="" hidden></div>
+        <div class="foto"><label for="fotoDorso">Dorso</label>
+          <input id="fotoDorso" type="file" accept="image/*"><img id="vistaDorso" alt="" hidden></div>
+      </div>
+    </div>
+
+    <div class="tarjeta">
+      <h2>Declaraciones</h2>
+      <label class="check"><input type="checkbox" id="aceptaConvenio">
+        <span>Declaro haber leído el Convenio de Hospedaje de Lavanda Suite y acepto sus condiciones y las normas de convivencia del edificio.</span></label>
+      <label class="check"><input type="checkbox" id="aceptaHorarios">
+        <span>Me comprometo a respetar los horarios de descanso (13 a 16 hs y 0 a 8 hs) y los de ingreso (desde las 14 hs) y salida (hasta las 10 hs).</span></label>
+      <label class="check"><input type="checkbox" id="aceptaDatosPersonales">
+        <span>Autorizo el uso de mis datos personales únicamente para esta estadía y, si fuera necesario, para informarlos a la administración del consorcio (Ley 25.326).</span></label>
+    </div>
+
+    <p id="error" class="error" hidden></p>
+    <button id="enviar" type="submit">Enviar datos</button>
+  </form>
+</main>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+  import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+  import { firebaseConfig } from "./config.js";
+
+  const $ = (id) => document.getElementById(id);
+  const mostrar = (id) => { for (const x of ["cargando", "sinReserva", "listo", "formulario"]) $(x).hidden = x !== id; };
+  const dias = ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"];
+  const fecha = (iso) => {
+    const [a, m, d] = iso.split("-").map(Number);
+    const f = new Date(Date.UTC(a, m - 1, d));
+    return `${dias[f.getUTCDay()]} ${String(d).padStart(2, "0")}/${String(m).padStart(2, "0")}/${a}`;
+  };
+
+  const token = new URLSearchParams(location.search).get("t") || "";
+  const db = getFirestore(initializeApp(firebaseConfig));
+
+  async function iniciar() {
+    if (!/^[A-Za-z0-9]{16,64}$/.test(token)) return mostrar("sinReserva");
+    try {
+      const invitacion = await getDoc(doc(db, "invitaciones", token));
+      if (!invitacion.exists()) return mostrar("sinReserva");
+      const r = invitacion.data();
+      const nombre = (r.huesped || "").trim();
+      $("saludo").textContent = nombre ? `¡Hola ${nombre.split(" ")[0]}!` : "¡Hola!";
+      $("fechas").textContent = `Ingreso ${fecha(r.checkIn)} (14 hs) · Salida ${fecha(r.checkOut)} (10 hs) · ${r.noches} noches`;
+      const partes = nombre.split(" ");
+      $("nombre").value = partes[0] || "";
+      $("apellido").value = partes.slice(1).join(" ");
+      if (r.mascota) $("mascota").value = "Pequeña (menos de 10 kg)";
+      mostrar("formulario");
+    } catch (e) {
+      console.error(e);
+      mostrar("sinReserva");
+    }
+  }
+
+  // Achica la foto a JPEG para que entre en un documento de Firestore (máximo 1 MiB).
+  async function comprimir(archivo) {
+    const imagen = await createImageBitmap(archivo);
+    let lado = 1280, calidad = 0.7, url = "";
+    for (let intento = 0; intento < 6; intento++) {
+      const escala = Math.min(1, lado / Math.max(imagen.width, imagen.height));
+      const lienzo = document.createElement("canvas");
+      lienzo.width = Math.round(imagen.width * escala);
+      lienzo.height = Math.round(imagen.height * escala);
+      lienzo.getContext("2d").drawImage(imagen, 0, 0, lienzo.width, lienzo.height);
+      url = lienzo.toDataURL("image/jpeg", calidad);
+      if (url.length < 700000) return url;
+      lado = Math.round(lado * 0.8);
+      calidad = Math.max(0.4, calidad - 0.1);
+    }
+    return url;
+  }
+
+  const fotos = { frente: "", dorso: "" };
+  for (const [lado, entrada, vista] of [["frente", "fotoFrente", "vistaFrente"], ["dorso", "fotoDorso", "vistaDorso"]]) {
+    $(entrada).addEventListener("change", async () => {
+      const archivo = $(entrada).files[0];
+      fotos[lado] = "";
+      $(vista).hidden = true;
+      if (!archivo) return;
+      try {
+        fotos[lado] = await comprimir(archivo);
+        $(vista).src = fotos[lado];
+        $(vista).hidden = false;
+      } catch (e) {
+        console.error(e);
+        $("error").textContent = "No se pudo leer la foto. Probá con otra imagen.";
+        $("error").hidden = false;
+      }
+    });
+  }
+
+  $("vehiculo").addEventListener("change", () => { $("bloquePatente").hidden = $("vehiculo").value !== "si"; });
+
+  $("formulario").addEventListener("submit", async (evento) => {
+    evento.preventDefault();
+    const texto = (id) => $(id).value.trim();
+    const faltan = ["nombre", "apellido", "numeroDocumento", "calle", "numero", "localidad", "provincia", "telefono"]
+      .filter((id) => !texto(id));
+    if (faltan.length) {
+      $("error").textContent = "Completá los campos obligatorios.";
+      $("error").hidden = false;
+      $(faltan[0]).focus();
+      return;
+    }
+    if (!fotos.frente || !fotos.dorso) {
+      $("error").textContent = "Adjuntá la foto del documento (frente y dorso). Si no podés, escribinos por WhatsApp.";
+      $("error").hidden = false;
+      return;
+    }
+    if (!$("aceptaConvenio").checked || !$("aceptaHorarios").checked || !$("aceptaDatosPersonales").checked) {
+      $("error").textContent = "Para continuar tenés que aceptar las tres declaraciones.";
+      $("error").hidden = false;
+      return;
+    }
+    $("error").hidden = true;
+    $("enviar").disabled = true;
+    $("enviar").textContent = "Enviando…";
+    const vehiculo = $("vehiculo").value === "si";
+    try {
+      for (const lado of ["frente", "dorso"]) {
+        await setDoc(doc(db, "registros", token, "fotos", lado), { imagen: fotos[lado], tipo: "image/jpeg" });
+      }
+      await setDoc(doc(db, "registros", token), {
+        nombre: texto("nombre"), apellido: texto("apellido"),
+        tipoDocumento: texto("tipoDocumento"), numeroDocumento: texto("numeroDocumento"), paisDocumento: texto("paisDocumento"),
+        calle: texto("calle"), numero: texto("numero"), pisoDepto: texto("pisoDepto"),
+        localidad: texto("localidad"), provincia: texto("provincia"), pais: texto("pais"),
+        email: texto("email"), telefono: texto("telefono"), horaLlegada: texto("horaLlegada"),
+        cantidadHuespedes: Number($("cantidadHuespedes").value), acompanantes: texto("acompanantes"),
+        vehiculo, patente: vehiculo ? texto("patente") : "", mascota: texto("mascota"),
+        aceptaConvenio: true, aceptaHorarios: true, aceptaDatosPersonales: true,
+        enviado: serverTimestamp(),
+      });
+      mostrar("listo");
+    } catch (e) {
+      console.error(e);
+      $("error").textContent = "No se pudo enviar. Revisá tu conexión y probá de nuevo, o escribinos por WhatsApp.";
+      $("error").hidden = false;
+      $("enviar").disabled = false;
+      $("enviar").textContent = "Enviar datos";
+    }
+  });
+
+  iniciar();
+</script>
+</body>
+</html>
