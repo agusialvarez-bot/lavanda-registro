@@ -19,8 +19,23 @@
     * { box-sizing: border-box; }
     body { margin: 0; background: var(--fondo); color: var(--texto); font: 16px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
     main { max-width: 640px; margin: 0 auto; padding: 16px; }
-    header { text-align: center; padding: 16px 0 8px; }
+    header { text-align: center; }
+    .portada { position: relative; border-radius: 16px; overflow: hidden; margin-bottom: 12px;
+      background: linear-gradient(135deg, #b39ddb 0%, #7e57c2 55%, #5e3a9c 100%); min-height: 150px; }
+    .portada img { display: block; width: 100%; height: 220px; object-fit: cover; }
+    .portada .titulo { position: absolute; inset: auto 0 0 0; padding: 28px 16px 14px; color: #fff; text-align: left;
+      background: linear-gradient(transparent, rgba(40, 20, 70, .75)); }
+    .portada .titulo h1 { color: #fff; font-size: 1.7rem; margin: 0; letter-spacing: .5px; }
+    .portada .titulo div { opacity: .95; }
     h1 { font-size: 1.5rem; margin: 0; color: var(--primario); }
+    .info { list-style: none; padding: 0; margin: 8px 0 0; }
+    .info li { display: flex; gap: 10px; padding: 6px 0; border-top: 1px solid var(--borde); }
+    .info li:first-child { border-top: 0; }
+    .info span:first-child { width: 1.5em; text-align: center; flex: none; }
+    details summary { cursor: pointer; font-weight: 600; color: var(--primario); }
+    details ul { padding-left: 1.2em; margin: 8px 0 0; }
+    details li { margin: 4px 0; }
+    footer { text-align: center; color: var(--suave); font-size: .9rem; padding: 16px 0 32px; }
     .tarjeta { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 14px; padding: 16px; margin: 12px 0; }
     h2 { font-size: 1.05rem; margin: 0 0 8px; }
     label { display: block; font-weight: 600; margin: 12px 0 4px; }
@@ -45,9 +60,13 @@
 </head>
 <body>
 <main>
-  <header>
-    <h1>Lavanda Suite</h1>
-    <div class="ayuda">Villa Gesell · Registro de huéspedes</div>
+  <header class="portada">
+    <!-- Foto del departamento: si no está el archivo, queda el fondo lavanda -->
+    <img src="portada.jpg" alt="Lavanda Suite, Villa Gesell" onerror="this.remove()">
+    <div class="titulo">
+      <h1>Lavanda Suite 🪻</h1>
+      <div>Villa Gesell · Registro de huéspedes</div>
+    </div>
   </header>
 
   <p id="cargando" class="tarjeta">Cargando tu reserva…</p>
@@ -63,10 +82,40 @@
     <div class="tarjeta">
       <h2 id="saludo"></h2>
       <div id="fechas" class="ayuda"></div>
+      <p>¡Gracias por elegir Lavanda Suite! 🪻 Para confirmar tu reserva necesitamos los datos del titular y de quienes
+        lo acompañan. Con esta información armamos el <b>convenio de hospedaje</b>, que te enviamos por WhatsApp junto
+        con los datos para la seña.</p>
+      <p class="ayuda">Completarlo lleva unos 5 minutos. Tené a mano tu documento: te vamos a pedir una foto de frente y de dorso.</p>
+    </div>
+
+    <div class="tarjeta">
+      <h2>Para tener en cuenta 🪻</h2>
+      <ul class="info">
+        <li><span>📍</span><span>Edificio La Braña II, Av. 1 y Paseo 146, zona sur de Villa Gesell, a 1 cuadra del mar.</span></li>
+        <li><span>🕑</span><span>Ingreso desde las <b>14 hs</b> y salida hasta las <b>10 hs</b>.</span></li>
+        <li><span>👥</span><span>Capacidad máxima: <b>4 personas</b>, incluyendo menores.</span></li>
+        <li><span>🛏️</span><span>No incluye ropa de cama ni toallas: hay que traer sábanas, fundas y toallas.</span></li>
+        <li><span>🐾</span><span>Mascotas bienvenidas si se avisan al reservar (tienen un adicional).</span></li>
+        <li><span>💳</span><span>Pagos solo por transferencia. El depósito en garantía se devuelve al finalizar la estadía, una vez revisado el departamento.</span></li>
+      </ul>
+      <details>
+        <summary>Resumen de las normas del edificio</summary>
+        <ul>
+          <li>Silencio en los horarios de descanso: de 13 a 16 hs y de 0 a 8 hs.</li>
+          <li>No se permiten fiestas ni reuniones numerosas.</li>
+          <li>No se puede fumar dentro del departamento ni en espacios comunes cerrados.</li>
+          <li>No se pueden usar parrillas en los balcones; hay una parrilla común en el patio.</li>
+          <li>No colgar ropa ni objetos en balcones y ventanas.</li>
+          <li>Las mascotas no pueden estar en los espacios comunes y deben estar siempre bajo control.</li>
+          <li>Las multas del consorcio por incumplimientos se descuentan del depósito.</li>
+        </ul>
+        <p class="ayuda">El detalle completo está en el convenio de hospedaje que te enviamos después.</p>
+      </details>
     </div>
 
     <div class="tarjeta">
       <h2>Titular de la reserva</h2>
+      <div class="ayuda">La persona que firma el convenio y es responsable de la estadía.</div>
       <div class="fila">
         <div><label for="nombre">Nombre</label><input id="nombre" required maxlength="100" autocomplete="given-name"></div>
         <div><label for="apellido">Apellido</label><input id="apellido" required maxlength="100" autocomplete="family-name"></div>
@@ -104,6 +153,7 @@
 
     <div class="tarjeta">
       <h2>Huéspedes</h2>
+      <div class="ayuda">Nos lo pide la administración del edificio para saber quién se aloja.</div>
       <label for="cantidadHuespedes">Cantidad total de huéspedes <span class="ayuda">(incluye menores; máximo 4)</span></label>
       <select id="cantidadHuespedes"><option>1</option><option selected>2</option><option>3</option><option>4</option></select>
       <label for="acompanantes">Nombre y DNI de cada acompañante <span class="ayuda">(uno por línea)</span></label>
@@ -141,6 +191,7 @@
     <p id="error" class="error" hidden></p>
     <button id="enviar" type="submit">Enviar datos</button>
   </form>
+  <footer>Lavanda Suite · Villa Gesell 🪻🪻</footer>
 </main>
 
 <script type="module">
